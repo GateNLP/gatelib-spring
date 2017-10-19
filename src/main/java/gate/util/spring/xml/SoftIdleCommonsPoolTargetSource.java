@@ -29,6 +29,8 @@ import org.springframework.aop.target.CommonsPoolTargetSource;
  */
 public class SoftIdleCommonsPoolTargetSource extends CommonsPoolTargetSource {
 
+  private static final long serialVersionUID = -6668052870905847355L;
+
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   protected ObjectPool createObjectPool() {
