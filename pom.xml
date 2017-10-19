@@ -48,6 +48,15 @@
 			<version>2.5.6.SEC01</version>
 			<scope>compile</scope>
 		</dependency>
+
+		<!-- required only for <gate:pooled-proxy>, feel free to exclude if you are not using pooling -->
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+			<version>1.6</version>
+			<scope>compile</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>

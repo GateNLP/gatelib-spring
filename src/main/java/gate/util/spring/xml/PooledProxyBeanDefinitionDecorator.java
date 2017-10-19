@@ -111,7 +111,7 @@ public class PooledProxyBeanDefinitionDecorator implements
       targetSourceClassName = ((Element)node).getAttribute(TARGET_SOURCE_CLASS);
     } else {
       targetSourceClassName =
-              "org.springframework.aop.target.CommonsPoolTargetSource";
+              "gate.util.spring.xml.SoftIdleCommonsPoolTargetSource";
     }
     targetSourceDefinition.setBeanClassName(targetSourceClassName);
     targetSourceDefinition.getPropertyValues().addPropertyValue(
