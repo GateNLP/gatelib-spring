@@ -4,7 +4,7 @@ import gate.util.spring.ExtraGatePlugin;
 import gate.util.spring.Init;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
@@ -19,17 +19,23 @@ import org.w3c.dom.Element;
  * &lt;/bean&gt;
  * </pre>
  * 
+ * Or for a Maven-style plugin <code>&lt;gate:extra-plugin
+ * group-id="uk.ac.gate.plugins" artifact-id="annie" version="8.5" /&gt;</code>
+ * 
  * While the element can take an <code>id</code> it is not normally
  * necessary to provide one as the {@link Init} bean enumerates all
  * {@link ExtraGatePlugin} beans by type, ignoring their IDs.
  */
 public class ExtraGatePluginBeanDefinitionParser
                                                 extends
-                                                  AbstractSingleBeanDefinitionParser {
+                                                  AbstractSimpleBeanDefinitionParser {
 
   @Override
-  protected void doParse(Element element, BeanDefinitionBuilder builder) {
-    builder.addPropertyValue("location", DomUtils.getTextValue(element));
+  protected void postProcess(BeanDefinitionBuilder builder, Element element) {
+    String location = DomUtils.getTextValue(element);
+    if(location != null && !"".equals(location)) {
+      builder.addPropertyValue("location", location);
+    }
   }
 
   @Override

@@ -76,6 +76,9 @@
       <xsd:simpleContent>
         <xsd:extension base="xsd:anyURI">
           <xsd:attribute name="id" type="xsd:ID" use="optional" />
+          <xsd:attribute name="group-id" type="xsd:string" use="optional" />
+          <xsd:attribute name="artifact-id" type="xsd:string" use="optional" />
+          <xsd:attribute name="version" type="xsd:string" use="optional" />
         </xsd:extension>
       </xsd:simpleContent>
     </xsd:complexType>

@@ -17,6 +17,8 @@
 package gate.util.spring;
 
 import gate.Gate;
+import gate.creole.Plugin;
+import gate.creole.ResourceInstantiationException;
 import gate.util.GateException;
 
 import org.apache.log4j.Logger;
@@ -190,7 +192,6 @@ public class Init implements BeanFactoryAware {
     }
     if(plugins != null && !plugins.isEmpty()) {
       for(Resource plugin : plugins) {
-        log.debug("Loading preload-plugin " + plugin);
         loadPlugin(plugin);
       }
     }
@@ -200,18 +201,32 @@ public class Init implements BeanFactoryAware {
               .beanNamesForTypeIncludingAncestors(
                       (ListableBeanFactory)beanFactory, ExtraGatePlugin.class);
       for(String name : extraPluginBeanNames) {
-        Resource plugin = ((ExtraGatePlugin)beanFactory.getBean(name,
-                ExtraGatePlugin.class)).getLocation();
-        if(plugin != null) {
-          log.debug("Loading extra-plugin " + plugin);
-          loadPlugin(plugin);
-        }
+        ExtraGatePlugin xp = (ExtraGatePlugin)beanFactory.getBean(name,
+            ExtraGatePlugin.class);
+        loadPlugin(xp);
       }
     }
   } // init()
 
-  private void loadPlugin(Resource plugin) throws GateException, IOException,
+  private void loadPlugin(ExtraGatePlugin plugin) throws GateException, IOException,
           MalformedURLException {
+    if(plugin.getLocation() != null) {
+      loadPlugin(plugin.getLocation());
+    } else {
+      // maven plugin
+      if(plugin.getGroupId() == null) {
+        throw new ResourceInstantiationException(
+            "Extra plugin definition requires either a location or a set of Maven co-ordinates");
+      }
+      log.debug("Loading Maven plugin " + plugin.getGroupId() + ":" + plugin.getArtifactId() + ":" + plugin.getVersion());
+      Gate.getCreoleRegister().registerPlugin(new Plugin.Maven(
+          plugin.getGroupId(), plugin.getArtifactId(), plugin.getVersion()));
+    }
+  }
+  
+  private void loadPlugin(Resource plugin) throws GateException, IOException {
+    log.debug("Loading plugin from " + plugin);
+    // directory plugin
     File pluginFile = null;
     try {
       pluginFile = plugin.getFile();
@@ -221,10 +236,10 @@ public class Init implements BeanFactoryAware {
     }
 
     if(pluginFile == null) {
-      Gate.getCreoleRegister().registerDirectories(plugin.getURL());
+      Gate.getCreoleRegister().registerPlugin(new Plugin.Directory(plugin.getURL()));
     }
     else {
-      Gate.getCreoleRegister().registerDirectories(pluginFile.toURI().toURL());
+      Gate.getCreoleRegister().registerPlugin(new Plugin.Directory(pluginFile.toURI().toURL()));
     }
   }
 }
