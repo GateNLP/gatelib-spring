@@ -116,6 +116,13 @@ public class Init implements BeanFactoryAware {
   private static final Logger log = Logger.getLogger(Init.class);
 
   /**
+   * An optional list of Maven cache directories to add to GATE's
+   * resolution logic.  Note that these <strong>must</strong> be
+   * resolvable as java.io.File, otherwise they will be ignored.
+   */
+  private List<Resource> mavenCaches;
+  
+  /**
    * An optional list of plugins to load after GATE initialisation.
    */
   private List<Resource> plugins;
@@ -164,6 +171,10 @@ public class Init implements BeanFactoryAware {
   public void setRunInSandbox(boolean runInSandbox) {
     this.runInSandbox = Boolean.valueOf(runInSandbox);
   }
+  
+  public void setMavenCaches(List<Resource> caches) {
+    this.mavenCaches = caches;
+  }
 
   public void setPreloadPlugins(List<Resource> plugins) {
     this.plugins = plugins;
@@ -175,6 +186,15 @@ public class Init implements BeanFactoryAware {
    * in the containing factory.
    */
   public void init() throws Exception {
+    if(mavenCaches != null) {
+      for(Resource cache : mavenCaches) {
+        try {
+          gate.util.maven.Utils.addCacheDirectory(cache.getFile());
+        } catch(Exception e) {
+          log.warn("Could not add " + cache + " as a Maven cache - is it resolvable as a file?", e);
+        }
+      }
+    }
     if(!Gate.isInitialised()) {
       log.info("Initialising GATE");
 

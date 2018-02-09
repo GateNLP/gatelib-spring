@@ -38,6 +38,13 @@ public class InitBeanDefinitionParser
   protected void doParse(Element element, ParserContext ctx,
           BeanDefinitionBuilder builder) {
     super.doParse(element, ctx, builder);
+    Element cachesElt = DomUtils.getChildElementByTagName(element,
+        "maven-caches");
+    if(cachesElt != null) {
+      List<?> cachesList = ctx.getDelegate().parseListElement(cachesElt,
+              builder.getBeanDefinition());
+      builder.addPropertyValue("mavenCaches", cachesList);
+    }
     Element preloadElt = DomUtils.getChildElementByTagName(element,
             "preload-plugins");
     if(preloadElt != null) {
