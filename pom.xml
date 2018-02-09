@@ -34,6 +34,12 @@
 		</developer>
 	</developers>
 
+	<scm>
+		<connection>scm:git:git://github.com/GateNLP/gate-spring.git</connection>
+		<developerConnection>scm:git:git@github.com:GateNLP/gate-spring.git</developerConnection>
+		<url>https://github.com/GateNLP/gate-spring</url>
+	</scm>
+
 	<dependencies>
 		<dependency>
 			<groupId>uk.ac.gate</groupId>	
