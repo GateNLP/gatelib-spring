@@ -12,6 +12,10 @@
 	<groupId>uk.ac.gate</groupId>
 	<artifactId>gate-spring</artifactId>
 	<version>${gate-core.version}</version>
+
+        <name>GATE Spring support</name>
+        <description>Helper classes to support the use of GATE within the Spring framework</description>
+        <url>https://gate.ac.uk/</url>
 	
 	<licenses>
 		<license>
@@ -151,21 +155,19 @@
 				<version>2.9.1</version>
 				<configuration>
 					<failOnError>false</failOnError>		
- -					<additionalparam>-Xdoclint:none</additionalparam>
+ 					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>
 	
-	<repositories>
-		<repository>
-			<id>gate.ac.uk</id>
-			<name>GATE Development Repository</name>
-			<url>http://repo.gate.ac.uk/content/groups/public/</url>
-		</repository>
-	</repositories>
-
 	<distributionManagement>
+		<repository>
+			<id>gate-oss</id>
+			<name>Sonatype OSS staging</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+			<layout>default</layout>
+		</repository>
 		<snapshotRepository>
 			<id>gate.snapshots</id>
 			<name>GATE Snapshots Repository</name>
