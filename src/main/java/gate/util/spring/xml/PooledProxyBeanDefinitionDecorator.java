@@ -17,6 +17,7 @@ package gate.util.spring.xml;
 
 import javax.xml.XMLConstants;
 
+import gate.util.GateRuntimeException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -110,8 +111,20 @@ public class PooledProxyBeanDefinitionDecorator implements
             && ((Element)node).hasAttribute(TARGET_SOURCE_CLASS)) {
       targetSourceClassName = ((Element)node).getAttribute(TARGET_SOURCE_CLASS);
     } else {
-      targetSourceClassName =
-              "gate.util.spring.xml.SoftIdleCommonsPoolTargetSource";
+      try {
+        Class.forName("org.apache.commons.pool2.impl.GenericObjectPool");
+        // if we get here then commons-pool2 is available
+        targetSourceClassName = "gate.util.spring.xml.SoftIdleCommonsPool2TargetSource";
+      } catch(ClassNotFoundException e) {
+        try {
+          Class.forName("org.apache.commons.pool.impl.GenericObjectPool");
+          // if we get here then commons-pool (v1) is available
+          targetSourceClassName =
+                  "gate.util.spring.xml.SoftIdleCommonsPoolTargetSource";
+        } catch(ClassNotFoundException e1) {
+          throw new GateRuntimeException("Neither commons-pool2 nor commons-pool available");
+        }
+      }
     }
     targetSourceDefinition.setBeanClassName(targetSourceClassName);
     targetSourceDefinition.getPropertyValues().addPropertyValue(

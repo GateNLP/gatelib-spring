@@ -15,37 +15,37 @@
  */
 package gate.util.spring.xml;
 
-import org.apache.commons.pool.ObjectPool;
-import org.apache.commons.pool.impl.GenericObjectPool;
-import org.springframework.aop.target.CommonsPoolTargetSource;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.aop.target.CommonsPool2TargetSource;
 
 /**
- * CommonsPoolTargetSource that sets the softMinEvictableIdleTimeMillis on the
+ * CommonsPool2TargetSource that sets the softMinEvictableIdleTimeMillis on the
  * underlying pool instead of the "hard" minEvictableIdleTimeMillis. The "soft"
  * one respects minIdle, the "hard" one shuts down all idle instances ignoring
  * minIdle.
  * 
  * @author Ian Roberts
  */
-@SuppressWarnings("deprecation")
-public class SoftIdleCommonsPoolTargetSource extends CommonsPoolTargetSource {
+public class SoftIdleCommonsPool2TargetSource extends CommonsPool2TargetSource {
 
   private static final long serialVersionUID = -6668052870905847355L;
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   protected ObjectPool createObjectPool() {
-    GenericObjectPool gop = new GenericObjectPool(this);
-    gop.setMaxActive(getMaxSize());
-    gop.setMaxIdle(getMaxIdle());
-    gop.setMinIdle(getMinIdle());
-    gop.setMaxWait(getMaxWait());
-    gop.setTimeBetweenEvictionRunsMillis(getTimeBetweenEvictionRunsMillis());
+    GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+    config.setMaxTotal(this.getMaxSize());
+    config.setMaxIdle(this.getMaxIdle());
+    config.setMinIdle(this.getMinIdle());
+    config.setMaxWaitMillis(this.getMaxWait());
+    config.setTimeBetweenEvictionRunsMillis(this.getTimeBetweenEvictionRunsMillis());
     // Next line is the only difference from superclass - set "soft"
     // rather than "hard" minEvictableIdleTimeMillis
-    gop.setSoftMinEvictableIdleTimeMillis(getMinEvictableIdleTimeMillis());
-    gop.setWhenExhaustedAction(getWhenExhaustedAction());
-    return gop;
+    config.setSoftMinEvictableIdleTimeMillis(this.getMinEvictableIdleTimeMillis());
+    config.setBlockWhenExhausted(this.isBlockWhenExhausted());
+    return new GenericObjectPool(this, config);
   }
   
 }
