@@ -221,7 +221,7 @@ public class Init implements BeanFactoryAware {
               .beanNamesForTypeIncludingAncestors(
                       (ListableBeanFactory)beanFactory, ExtraGatePlugin.class);
       for(String name : extraPluginBeanNames) {
-        ExtraGatePlugin xp = (ExtraGatePlugin)beanFactory.getBean(name,
+        ExtraGatePlugin xp = beanFactory.getBean(name,
             ExtraGatePlugin.class);
         loadPlugin(xp);
       }
