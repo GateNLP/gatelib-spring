@@ -7,6 +7,9 @@ pipeline {
         maven 'Maven Current' 
         jdk 'JDK1.8' 
     }
+    options {
+        disableConcurrentBuilds()
+    }
     stages {
         stage ('Build') {
             steps {
@@ -15,7 +18,7 @@ pipeline {
         }
         stage('Document') {
             when{
-                expression { currentBuild.result != "FAILED" && currentBuild.changeSets != null && currentBuild.changeSets.size() > 0 }
+                expression { currentBuild.currentResult != "FAILED" && currentBuild.changeSets != null && currentBuild.changeSets.size() > 0 }
             }
             steps {
                 sh 'mvn -e site'
@@ -34,7 +37,7 @@ pipeline {
         stage('Deploy') {
             when{
                 branch 'master'
-                expression { currentBuild.result == "SUCCESS" && currentBuild.changeSets != null && currentBuild.changeSets.size() > 0 }
+                expression { currentBuild.currentResult == "SUCCESS" && currentBuild.changeSets != null && currentBuild.changeSets.size() > 0 }
             }
             steps {
                 sh 'mvn -e -Dmaven.test.skip=true source:jar javadoc:jar deploy'
